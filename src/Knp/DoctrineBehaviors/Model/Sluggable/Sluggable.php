@@ -94,6 +94,8 @@ trait Sluggable
 
             // generate the slug itself
             $sluggableText = implode($usableValues, ' ');
+            
+            //Here will go polish characters.
             $urlized = strtolower( trim( preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', iconv('UTF-8', 'ASCII//TRANSLIT', $sluggableText) ), $this->getSlugDelimiter() ) );
             $urlized = preg_replace("/[\/_|+ -]+/", $this->getSlugDelimiter(), $urlized);
 
