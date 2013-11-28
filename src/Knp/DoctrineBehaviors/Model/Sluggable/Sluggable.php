@@ -60,7 +60,7 @@ trait Sluggable
 
         return $this;
     }
-    
+
     /**
      * Returns the entity's slug.
      *
@@ -76,29 +76,29 @@ trait Sluggable
      */
     public function generateSlug()
     {
-        if ( $this->getRegenerateSlugOnUpdate() || empty( $this->slug ) ) {
+        if ($this->getRegenerateSlugOnUpdate() || empty($this->slug)) {
             $fields = $this->getSluggableFields();
             $usableValues = [];
 
             foreach ($fields as $field) {
                 // Too bad empty is a language construct...otherwise we could use the return value in a write context :)
                 $val = $this->{$field};
-                if ( !empty( $val ) ) {
+                if (!empty($val)) {
                     $usableValues[] = $val;
                 }
             }
 
-            if ( count($usableValues) < 1 ) {
-                throw new \UnexpectedValueException('Sluggable expects to have at least one usable (non-empty) field from the following: [ ' . implode($fields, ',') .' ]');
+            if (count($usableValues) < 1) {
+                throw new \UnexpectedValueException('Sluggable expects to have at least one usable (non-empty) field from the following: [ ' . implode($fields, ',') . ' ]');
             }
 
             // generate the slug itself
             $sluggableText = implode($usableValues, ' ');
 
             //Here will go polish characters.
-            $sluggableText = strtr($sluggableText, "ążśźęćńółĄŻŚŹĘĆŃÓŁ" "azszecnolAZSZECNOL");
-            
-            $urlized = strtolower( trim( preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', iconv('UTF-8', 'ASCII//TRANSLIT', $sluggableText) ), $this->getSlugDelimiter() ) );
+            $sluggableText = str_replace(["ą", "ż", "ś", "ź", "ę", "ć", "ń", "ó", "ł", "Ą", "Ż", "Ś", "Ź", "Ę", "Ć", "Ń", "Ó", "Ł"], ["a", "z", "s", "z", "e", "c", "n", "o", "l", "A", "Z", "S", "Z", "E", "C", "N", "O", "L"], $sluggableText);
+
+            $urlized = strtolower(trim(preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', iconv('UTF-8', 'ASCII//TRANSLIT', $sluggableText)), $this->getSlugDelimiter()));
             $urlized = preg_replace("/[\/_|+ -]+/", $this->getSlugDelimiter(), $urlized);
 
             $this->slug = $urlized;
